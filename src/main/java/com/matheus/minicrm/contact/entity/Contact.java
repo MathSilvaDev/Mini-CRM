@@ -22,15 +22,15 @@ public class Contact {
     private ContactType type;
 
     @Column(nullable = false, unique = true)
-    private String value;
+    private String contactValue;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    public Contact(ContactType type, String value, Customer customer){
+    public Contact(ContactType type, String contactValue, Customer customer){
         this.type = type;
-        this.value = value;
+        this.contactValue = contactValue;
         this.customer = customer;
     }
 }

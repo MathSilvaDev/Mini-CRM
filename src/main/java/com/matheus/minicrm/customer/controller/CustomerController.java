@@ -1,12 +1,15 @@
 package com.matheus.minicrm.customer.controller;
 
 import com.matheus.minicrm.customer.dto.request.CustomerCreateRequest;
+import com.matheus.minicrm.customer.dto.response.CustomerReponseWithContacts;
 import com.matheus.minicrm.customer.dto.response.CustomerResponse;
 import com.matheus.minicrm.customer.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/customers")
@@ -21,6 +24,14 @@ public class CustomerController {
 
         return ResponseEntity.ok(
                 customerService.create(request)
+        );
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<CustomerReponseWithContacts>> findAll(){
+
+        return ResponseEntity.ok(
+                customerService.findAll()
         );
     }
 

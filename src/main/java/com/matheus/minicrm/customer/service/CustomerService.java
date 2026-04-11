@@ -51,8 +51,7 @@ public class CustomerService {
     @Transactional
     public CustomerResponseWithContacts addContactById(Long id, ContactCreateRequest request){
 
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Customer customer = findCustomerById(id);
 
         Contact contact = new Contact(
                 request.type(),
@@ -67,6 +66,17 @@ public class CustomerService {
         return toResponseWithContacts(customer);
     }
 
+    public CustomerResponseWithContacts findById(Long id){
+        Customer customer = findCustomerById(id);
+
+        return toResponseWithContacts(customer);
+    }
+
+    private Customer findCustomerById(Long id){
+        return customerRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
     private CustomerResponse toResponse(Customer customer){
         return new CustomerResponse(
                 customer.getId(),
@@ -76,7 +86,6 @@ public class CustomerService {
     }
 
     private CustomerResponseWithContacts toResponseWithContacts(Customer customer){
-
         return new CustomerResponseWithContacts(
                 customer.getId(),
                 customer.getName(),

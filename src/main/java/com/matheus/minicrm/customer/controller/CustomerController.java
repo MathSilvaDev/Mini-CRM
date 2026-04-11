@@ -47,4 +47,13 @@ public class CustomerController {
         );
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerResponseWithContacts> findById(
+            @PathVariable Long id){
+
+        return ResponseEntity.ok(
+                customerService.findById(id)
+        );
+    }
+
 }

@@ -1,10 +1,10 @@
 package com.matheus.minicrm.customer.dto.response;
 
-import com.matheus.minicrm.contact.dto.ContactResponse;
+import com.matheus.minicrm.contact.dto.response.ContactResponse;
 
 import java.util.List;
 
-public record CustomerReponseWithContacts(
+public record CustomerResponseWithContacts(
         Long id,
         String name,
         String email,

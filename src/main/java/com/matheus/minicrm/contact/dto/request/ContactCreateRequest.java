@@ -1,9 +1,8 @@
-package com.matheus.minicrm.contact.dto;
+package com.matheus.minicrm.contact.dto.request;
 
 import com.matheus.minicrm.contact.enums.ContactType;
 
-public record ContactResponse(
-        Long id,
+public record ContactCreateRequest(
         ContactType type,
         String contactValue
 ) { }

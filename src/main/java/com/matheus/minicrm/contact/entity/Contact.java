@@ -21,7 +21,7 @@ public class Contact {
     @Column(nullable = false)
     private ContactType type;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String contactValue;
 
     @ManyToOne

@@ -1,14 +1,18 @@
 package com.matheus.minicrm.customer.service;
 
-import com.matheus.minicrm.contact.dto.ContactResponse;
+import com.matheus.minicrm.contact.dto.request.ContactCreateRequest;
+import com.matheus.minicrm.contact.dto.response.ContactResponse;
+import com.matheus.minicrm.contact.entity.Contact;
+import com.matheus.minicrm.contact.repository.ContactRepository;
 import com.matheus.minicrm.customer.dto.request.CustomerCreateRequest;
-import com.matheus.minicrm.customer.dto.response.CustomerReponseWithContacts;
+import com.matheus.minicrm.customer.dto.response.CustomerResponseWithContacts;
 import com.matheus.minicrm.customer.dto.response.CustomerResponse;
 import com.matheus.minicrm.customer.entity.Customer;
 import com.matheus.minicrm.customer.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -18,6 +22,7 @@ import java.util.List;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final ContactRepository contactRepository;
 
     public CustomerResponse create(CustomerCreateRequest request){
 
@@ -35,12 +40,31 @@ public class CustomerService {
         return toResponse(customer);
     }
 
-    public List<CustomerReponseWithContacts> findAll(){
+    public List<CustomerResponseWithContacts> findAll(){
 
         return customerRepository.findAll()
                 .stream()
                 .map(this::toResponseWithContacts)
                 .toList();
+    }
+
+    @Transactional
+    public CustomerResponseWithContacts addContactById(Long id, ContactCreateRequest request){
+
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        Contact contact = new Contact(
+                request.type(),
+                request.contactValue(),
+                customer
+        );
+
+        contactRepository.save(contact);
+
+        customer.addContact(contact);
+
+        return toResponseWithContacts(customer);
     }
 
     private CustomerResponse toResponse(Customer customer){
@@ -51,9 +75,9 @@ public class CustomerService {
         );
     }
 
-    private CustomerReponseWithContacts toResponseWithContacts(Customer customer){
+    private CustomerResponseWithContacts toResponseWithContacts(Customer customer){
 
-        return new CustomerReponseWithContacts(
+        return new CustomerResponseWithContacts(
                 customer.getId(),
                 customer.getName(),
                 customer.getEmail(),

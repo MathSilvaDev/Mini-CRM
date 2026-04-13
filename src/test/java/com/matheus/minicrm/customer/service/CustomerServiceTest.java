@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -51,6 +52,21 @@ class CustomerServiceTest {
             assertEquals(request.email(), response.email());
 
             verify(customerRepository).save(any(Customer.class));
+        }
+
+        @Test
+        void shouldThrowConflictError(){
+
+            CustomerCreateRequest request = new CustomerCreateRequest(
+                    "nameTest",
+                    "test@email.com"
+            );
+
+            when(customerRepository.existsByEmail(request.email()))
+                    .thenReturn(true);
+
+            assertThrows(ResponseStatusException.class,
+                    () -> customerService.create(request));
         }
     }
 

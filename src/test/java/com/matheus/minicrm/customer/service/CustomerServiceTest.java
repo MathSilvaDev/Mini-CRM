@@ -1,5 +1,8 @@
 package com.matheus.minicrm.customer.service;
 
+import com.matheus.minicrm.contact.dto.request.ContactCreateRequest;
+import com.matheus.minicrm.contact.entity.Contact;
+import com.matheus.minicrm.contact.enums.ContactType;
 import com.matheus.minicrm.contact.repository.ContactRepository;
 import com.matheus.minicrm.customer.dto.request.CustomerCreateRequest;
 import com.matheus.minicrm.customer.dto.response.CustomerResponse;
@@ -16,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -106,6 +110,45 @@ class CustomerServiceTest {
             }
 
             return customers;
+        }
+    }
+
+    @Nested
+    public class AddContactById{
+
+        @Test
+        void shouldCreateContactSuccessfully(){
+
+            Customer customer = new Customer(
+                    "nameTest",
+                    "test@email.com"
+            );
+
+            ContactCreateRequest request = new ContactCreateRequest(
+                    ContactType.EMAIL,
+                    "test@email.com"
+            );
+
+            Contact contact = new Contact(
+                    request.type(),
+                    request.contactValue(),
+                    customer
+            );
+
+            when(customerRepository.findById(customer.getId()))
+                    .thenReturn(Optional.of(customer));
+
+            when(contactRepository.save(any(Contact.class)))
+                    .thenReturn(contact);
+
+            CustomerResponseWithContacts response =
+                    customerService.addContactById(customer.getId(), request);
+
+            assertEquals(customer.getContacts().size(), response.contacts().size());
+            assertEquals(customer.getEmail(), response.email());
+
+            verify(contactRepository).save(any(Contact.class));
+            verify(customerRepository).findById(customer.getId());
         }
     }
 

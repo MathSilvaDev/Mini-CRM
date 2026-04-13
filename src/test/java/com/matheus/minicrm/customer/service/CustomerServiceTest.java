@@ -152,4 +152,26 @@ class CustomerServiceTest {
         }
     }
 
+    @Nested class FindById{
+
+        @Test
+        void shouldFindByIdSuccessfully(){
+
+            Customer customer = new Customer(
+                    "nameTest",
+                    "test@email.com"
+            );
+
+            when(customerRepository.findById(customer.getId()))
+                    .thenReturn(Optional.of(customer));
+
+            CustomerResponseWithContacts response =
+                    customerService.findById(customer.getId());
+
+            assertEquals(customer.getContacts().size(), response.contacts().size());
+            assertEquals(customer.getEmail(), response.email());
+
+            verify(customerRepository).findById(customer.getId());
+        }
+    }
 }

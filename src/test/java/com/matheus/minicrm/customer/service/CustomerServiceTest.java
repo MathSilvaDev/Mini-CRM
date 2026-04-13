@@ -3,6 +3,7 @@ package com.matheus.minicrm.customer.service;
 import com.matheus.minicrm.contact.repository.ContactRepository;
 import com.matheus.minicrm.customer.dto.request.CustomerCreateRequest;
 import com.matheus.minicrm.customer.dto.response.CustomerResponse;
+import com.matheus.minicrm.customer.dto.response.CustomerResponseWithContacts;
 import com.matheus.minicrm.customer.entity.Customer;
 import com.matheus.minicrm.customer.repository.CustomerRepository;
 import org.junit.jupiter.api.Nested;
@@ -12,6 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -67,6 +71,41 @@ class CustomerServiceTest {
 
             assertThrows(ResponseStatusException.class,
                     () -> customerService.create(request));
+        }
+    }
+
+    @Nested
+    public class FindAll{
+
+        @Test
+        void shouldFindAllSuccessfully(){
+
+            List<Customer> customers = generateCustomers(2);
+
+            when(customerRepository.findAll())
+                    .thenReturn(customers);
+
+            List<CustomerResponseWithContacts> response = customerService.findAll();
+
+            assertEquals(customers.size(), response.size());
+        }
+
+        private List<Customer> generateCustomers(int num){
+
+            List<Customer> customers = new ArrayList<>();
+
+            for(int i = 0; i < num; i ++){
+                int count = i + 1;
+
+                Customer customer = new Customer(
+                        "nameTest-" + count,
+                        String.format("test%d@email.com", count)
+                );
+
+                customers.add(customer);
+            }
+
+            return customers;
         }
     }
 

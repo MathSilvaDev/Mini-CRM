@@ -20,7 +20,7 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<CustomerResponse> create(
             @Valid @RequestBody CustomerCreateRequest request){
 
@@ -29,7 +29,7 @@ public class CustomerController {
         );
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<CustomerResponseWithContacts>> findAll(){
 
         return ResponseEntity.ok(
